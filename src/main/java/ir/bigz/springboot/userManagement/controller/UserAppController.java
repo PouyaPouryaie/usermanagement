@@ -3,6 +3,7 @@ package ir.bigz.springboot.userManagement.controller;
 import ir.bigz.springboot.userManagement.domain.UserApp;
 import ir.bigz.springboot.userManagement.service.UserAppService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class UserAppController {
     private final UserAppService userAppService;
 
     @Autowired
-    public UserAppController(UserAppService userAppService) {
+    public UserAppController(@Qualifier("UserAppServiceImpl") UserAppService userAppService) {
         this.userAppService = userAppService;
     }
 
@@ -31,7 +32,7 @@ public class UserAppController {
     @ResponseStatus(HttpStatus.CREATED)
     public String addUser(@RequestBody UserApp userModel) {
         userAppService.saveUser(userModel);
-        return "user add successfully";
+        return "user add successfully and please validate email";
     }
 
     @GetMapping(path = "/{userAppId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -53,5 +54,12 @@ public class UserAppController {
     public String deleteUserById(@PathVariable("userAppId") long id) {
         userAppService.deleteUser(id);
         return "user delete successfully";
+    }
+
+    @PostMapping(path = "/emailVerifier/{userEmail}/{userInfoHash}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public String emailVerify(@PathVariable("userEmail") String userEmail,@PathVariable("userInfoHash") int userInfoHash) {
+        userAppService.emailVerifyingForUser(userEmail,userInfoHash);
+        return "email verify";
     }
 }

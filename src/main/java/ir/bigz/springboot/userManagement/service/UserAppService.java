@@ -19,4 +19,6 @@ public interface UserAppService {
 
     Optional<UserApp> getUserById(long id);
 
+    void emailVerifyingForUser(String userEmail,int userInfoHash);
+
 }

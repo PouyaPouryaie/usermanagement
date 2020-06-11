@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * {
@@ -18,7 +19,8 @@ import java.util.Map;
  * 	"activeStatus":true,
  * 	"deletedStatus":false,
  * 	"verifyPhoneNumberStatus":false,
- * 	"verifyEmailStatus":false
+ * 	"verifyEmailStatus":false,
+ * 	"questionAndAnswerMap":{"how old are you":"27"}
  * }
  */
 
@@ -70,8 +72,36 @@ public class UserApp {
     @Column(name = "verifyEmailStatus")
     private boolean verifyEmailStatus;
 
+    @Column(name = "hashCode")
+    private int hashCode;
+
 
     public UserApp() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserApp userApp = (UserApp) o;
+        return Objects.equals(firstName, userApp.firstName) &&
+                Objects.equals(lastName, userApp.lastName) &&
+                Objects.equals(userName, userApp.userName) &&
+                Objects.equals(email, userApp.email) &&
+                Objects.equals(phoneNumber, userApp.phoneNumber) &&
+                Objects.equals(password, userApp.password) &&
+                Objects.equals(joinDate, userApp.joinDate);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = this.getHashCode();
+        if(result == 0) {
+            result = Objects.hash(firstName, lastName, userName, email, phoneNumber, password, joinDate);
+            this.setHashCode(result);
+        }
+
+        return result;
     }
 
     @Override
@@ -204,5 +234,13 @@ public class UserApp {
 
     public void setQuestionAndAnswerMap(Map<String, String> questionAndAnswerMap) {
         this.questionAndAnswerMap = questionAndAnswerMap;
+    }
+
+    public int getHashCode() {
+        return hashCode;
+    }
+
+    public void setHashCode(int hashCode) {
+        this.hashCode = hashCode;
     }
 }
