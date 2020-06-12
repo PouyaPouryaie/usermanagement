@@ -26,53 +26,53 @@ import java.util.Objects;
 
 
 @Entity
-@Table(name = "userApp")
+@Table(name = "user_app")
 @Access(AccessType.FIELD)
 public class UserApp {
 
     @Id
     @GeneratedValue
-    @Column(name = "userAppId")
+    @Column(name = "user_app_id")
     private long id;
-    @Column(name = "firstName")
+    @Column(name = "first_name")
     private String firstName;
-    @Column(name = "lastName")
+    @Column(name = "last_name")
     private String lastName;
-    @Column(name = "userName")
+    @Column(name = "user_name")
     private String userName;
     @Column(name = "email")
     private String email;
-    @Column(name = "phoneNumber")
+    @Column(name = "phone_number")
     private String phoneNumber;
     @Column(name = "password")
     private String password;
 
     @ElementCollection
-    @MapKeyColumn(name="Question")
-    @Column(name="Answer")
-    @CollectionTable(name="QuestionAndAnswer", joinColumns=@JoinColumn(name="userAppId"))
+    @MapKeyColumn(name="question")
+    @Column(name="answer")
+    @CollectionTable(name="question_and_answer", joinColumns=@JoinColumn(name="user_app_id"))
     private Map<String, String> questionAndAnswerMap = new HashMap<>();
 
-    @Column(name="countFailedInLatestLogin")
+    @Column(name="count_failed_in_latest_login")
     private int countFailedInLatestLogin;
 
-    @Column(name= "joinDate")
+    @Column(name= "join_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Timestamp joinDate;
 
-    @Column(name = "activeStatus")
+    @Column(name = "active_status")
     private boolean activeStatus;
 
-    @Column(name = "deletedStatus")
+    @Column(name = "deleted_status")
     private boolean deletedStatus;
 
-    @Column(name = "verifyPhoneNumberStatus")
+    @Column(name = "verify_phone_number_status")
     private boolean verifyPhoneNumberStatus;
 
-    @Column(name = "verifyEmailStatus")
+    @Column(name = "verify_email_status")
     private boolean verifyEmailStatus;
 
-    @Column(name = "hashCode")
+    @Column(name = "hash_code")
     private int hashCode;
 
 

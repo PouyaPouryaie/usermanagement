@@ -29,6 +29,11 @@ public interface UserAppValidation extends Function<UserApp, ValidationResult> {
                 SUCCESS : EMAIL_NOT_VERIFY;
     }
 
+    static UserAppValidation isQuestionAndAnswerNotEmpty() {
+        return userApp -> userApp.getQuestionAndAnswerMap().size() > 0 ?
+                SUCCESS : QUESTION_NOT_ANSWER;
+    }
+
     default UserAppValidation and (UserAppValidation other) {
         return userApp -> {
             ValidationResult result = this.apply(userApp);
@@ -40,6 +45,7 @@ public interface UserAppValidation extends Function<UserApp, ValidationResult> {
         SUCCESS,
         PHONE_NUMBER_NOT_VALID,
         EMAIL_NOT_VALID,
-        EMAIL_NOT_VERIFY
+        EMAIL_NOT_VERIFY,
+        QUESTION_NOT_ANSWER
     }
 }

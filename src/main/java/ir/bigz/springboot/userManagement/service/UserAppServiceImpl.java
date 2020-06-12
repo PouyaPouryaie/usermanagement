@@ -3,11 +3,14 @@ package ir.bigz.springboot.userManagement.service;
 import ir.bigz.springboot.userManagement.domain.UserApp;
 import ir.bigz.springboot.userManagement.dto.UserAppRepository;
 import ir.bigz.springboot.userManagement.utils.DateAndTimeTools;
+import ir.bigz.springboot.userManagement.utils.EncryptTools;
 import ir.bigz.springboot.userManagement.utils.UserAppValidation;
 import ir.bigz.springboot.userManagement.utils.VerifyDomainTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,10 +35,12 @@ public class UserAppServiceImpl implements UserAppService{
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void saveUser(UserApp userApp) {
 
         if(validationUserAppProcess(userApp)==ValidationResult.SUCCESS){
             userApp.setJoinDate(DateAndTimeTools.getTimestampNow());
+            userApp.setPassword(EncryptTools.toSHAHash(userApp.getPassword()));
             userApp.setActiveStatus(true);
             userApp.setDeletedStatus(false);
             userApp.setVerifyEmailStatus(false);
@@ -92,6 +97,7 @@ public class UserAppServiceImpl implements UserAppService{
         return UserAppValidation
                 .isEmailValid()
                 .and(isPhoneNumberValid())
+                .and(isQuestionAndAnswerNotEmpty())
                 .apply(userApp);
     }
 
