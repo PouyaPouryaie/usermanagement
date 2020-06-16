@@ -8,23 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * {
- * 	"firstName":"pouya",
- * 	"lastName":"pouryaie",
- * 	"userName":"mr.po",
- * 	"email":"pouyapouryaie@gmail.com",
- * 	"phoneNumber":"9388773155",
- * 	"password":"123456",
- * 	"activeStatus":true,
- * 	"deletedStatus":false,
- * 	"verifyPhoneNumberStatus":false,
- * 	"verifyEmailStatus":false,
- * 	"questionAndAnswerMap":{"how old are you":"27"}
- * }
- */
-
-
 @Entity
 @Table(name = "user_app")
 @Access(AccessType.FIELD)
@@ -46,37 +29,55 @@ public class UserApp {
     private String phoneNumber;
     @Column(name = "password")
     private String password;
-
     @ElementCollection
     @MapKeyColumn(name="question")
     @Column(name="answer")
     @CollectionTable(name="question_and_answer", joinColumns=@JoinColumn(name="user_app_id"))
     private Map<String, String> questionAndAnswerMap = new HashMap<>();
-
     @Column(name="count_failed_in_latest_login")
     private int countFailedInLatestLogin;
-
     @Column(name= "join_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Timestamp joinDate;
-
+    @Column(name= "last_update_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Timestamp lastUpdateDate;
     @Column(name = "active_status")
     private boolean activeStatus;
-
     @Column(name = "deleted_status")
     private boolean deletedStatus;
-
     @Column(name = "verify_phone_number_status")
     private boolean verifyPhoneNumberStatus;
-
     @Column(name = "verify_email_status")
     private boolean verifyEmailStatus;
-
     @Column(name = "hash_code")
     private int hashCode;
 
-
     public UserApp() {
+    }
+
+    @Override
+    public UserApp clone() throws IllegalStateException {
+        try {
+            UserApp userApp = new UserApp();
+            userApp.setId(this.getId());
+            userApp.setFirstName(this.getFirstName());
+            userApp.setUserName(this.getUserName());
+            userApp.setLastName(this.getLastName());
+            userApp.setEmail(this.getEmail());
+            userApp.setPhoneNumber(this.getPhoneNumber());
+            userApp.setPassword(this.getPassword());
+            userApp.setVerifyPhoneNumberStatus(this.isVerifyPhoneNumberStatus());
+            userApp.setVerifyEmailStatus(this.isVerifyEmailStatus());
+            userApp.setDeletedStatus(this.isDeletedStatus());
+            userApp.setActiveStatus(this.isActiveStatus());
+            userApp.setQuestionAndAnswerMap(this.getQuestionAndAnswerMap());
+            userApp.setJoinDate(this.getJoinDate());
+            userApp.setLastUpdateDate(this.getLastUpdateDate());
+            return userApp;
+        }catch (IllegalStateException e){
+            throw new AssertionError("userApp clone was exception \n" + e.getMessage());
+        }
     }
 
     @Override
@@ -117,10 +118,12 @@ public class UserApp {
                 ", questionAndAnswerMap=" + questionAndAnswerMap +
                 ", countFailedInLatestLogin=" + countFailedInLatestLogin +
                 ", joinDate=" + joinDate +
+                ", lastUpdateDate=" + lastUpdateDate +
                 ", activeStatus=" + activeStatus +
                 ", deletedStatus=" + deletedStatus +
                 ", verifyPhoneNumberStatus=" + verifyPhoneNumberStatus +
                 ", verifyEmailStatus=" + verifyEmailStatus +
+                ", hashCode=" + hashCode +
                 '}';
     }
 
@@ -194,6 +197,14 @@ public class UserApp {
 
     public void setJoinDate(Timestamp joinDate) {
         this.joinDate = joinDate;
+    }
+
+    public Timestamp getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Timestamp lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 
     public boolean isActiveStatus() {

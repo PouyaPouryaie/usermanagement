@@ -40,12 +40,7 @@ public class UserServiceTest {
         userApp.setEmail("pouyapouryaie@hotmail.com");
         userApp.setPhoneNumber("09388773155");
         userApp.setPassword("123456");
-        userApp.setVerifyPhoneNumberStatus(false);
-        userApp.setVerifyEmailStatus(false);
-        userApp.setDeletedStatus(false);
-        userApp.setActiveStatus(true);
         userApp.setQuestionAndAnswerMap(QAndA);
-        userApp.setJoinDate(new Timestamp(new Date().getTime()));
     }
 
     @Test
@@ -62,6 +57,62 @@ public class UserServiceTest {
         Optional<UserApp> optionalUser = userAppService.getUserById(userAppSample.getId());
         assertThat(optionalUser).isPresent().hasValueSatisfying(c -> {
             assertThat(c).isEqualToComparingFieldByField(userApp);
+        });
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.REQUIRED)
+    void itShouldNotEqual(){
+
+        //get
+        UserApp userAppSample = userAppService.getUserById(1).get();
+        UserApp backup = userAppSample.clone();
+
+        //when
+        userAppSample.setEmail("pouyapouryaie@yahoo.com");
+
+
+        //then
+        assertThat(userAppSample).isNotEqualTo(backup);
+    }
+
+    @Test
+    @Transactional(propagation= Propagation.REQUIRED)
+    void itShouldNotUpdateUserApp() throws Exception{
+
+        //Get
+        UserApp userAppSample = userAppService.getUserById(1).get();
+        UserApp backup = userAppSample.clone();
+
+        userAppSample.setEmail("pouyapouryaie@yahoo.com");
+
+        //when
+        userAppService.updateUser(userAppSample);
+
+        //then
+        Optional<UserApp> optionalUser = userAppService.getUserById(userAppSample.getId());
+        assertThat(optionalUser).isPresent().hasValueSatisfying(c -> {
+            assertThat(c.getLastUpdateDate()).isEqualTo(backup.getLastUpdateDate());
+        });
+    }
+
+    @Test
+    @Transactional(propagation= Propagation.REQUIRED)
+    void itShouldUpdateUserApp() throws Exception{
+
+        //Get
+        UserApp userAppSample = userApp;
+        userAppService.saveUser(userAppSample);
+        UserApp backup = userAppSample.clone();
+        userAppSample.setEmail("pouyapouryaie@yahoo.com");
+
+        //when
+        userAppService.updateUser(userAppSample);
+
+        //then
+        Optional<UserApp> optionalUser = userAppService.getUserById(userAppSample.getId());
+        assertThat(optionalUser).isPresent().hasValueSatisfying(c -> {
+            assertThat(c.getLastUpdateDate()).isEqualTo(backup.getLastUpdateDate());
         });
     }
 }

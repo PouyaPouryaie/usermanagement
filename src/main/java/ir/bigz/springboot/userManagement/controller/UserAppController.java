@@ -55,11 +55,4 @@ public class UserAppController {
         userAppService.deleteUser(id);
         return "user delete successfully";
     }
-
-    @PostMapping(path = "/emailVerifier/{userEmail}/{userInfoHash}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public String emailVerify(@PathVariable("userEmail") String userEmail,@PathVariable("userInfoHash") int userInfoHash) {
-        userAppService.emailVerifyingForUser(userEmail,userInfoHash);
-        return "email verify";
-    }
 }

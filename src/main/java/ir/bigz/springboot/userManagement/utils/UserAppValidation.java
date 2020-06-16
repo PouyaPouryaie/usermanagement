@@ -12,6 +12,25 @@ public interface UserAppValidation extends Function<UserApp, ValidationResult> {
 
     static Pattern pattern = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$");
 
+
+    static UserAppValidation isUserNameNotNull() {
+        return userApp ->
+                userApp.getUserName() != null ?
+                        SUCCESS : USERNAME_HAS_NULL;
+    }
+
+    static UserAppValidation isPhoneNumberNotNull() {
+        return userApp ->
+                userApp.getPhoneNumber() != null ?
+                        SUCCESS : PHONE_NUMBER_HAS_NULL;
+    }
+
+    static UserAppValidation isEmailNotNull() {
+        return userApp ->
+                userApp.getEmail() != null ?
+                        SUCCESS : EMAIL_HAS_NULL;
+    }
+
     static UserAppValidation isEmailValid() {
         return userApp ->
             pattern.matcher(userApp.getEmail()).find() ?
@@ -22,11 +41,6 @@ public interface UserAppValidation extends Function<UserApp, ValidationResult> {
         return userApp -> userApp.getPhoneNumber().startsWith("0") &&
                 userApp.getPhoneNumber().length() == 11 ?
                 SUCCESS : PHONE_NUMBER_NOT_VALID;
-    }
-
-    static UserAppValidation isEmailVerify(int hashCode) {
-        return userApp -> userApp.hashCode() == hashCode ?
-                SUCCESS : EMAIL_NOT_VERIFY;
     }
 
     static UserAppValidation isQuestionAndAnswerNotEmpty() {
@@ -43,9 +57,11 @@ public interface UserAppValidation extends Function<UserApp, ValidationResult> {
 
     enum ValidationResult{
         SUCCESS,
+        USERNAME_HAS_NULL,
+        EMAIL_HAS_NULL,
+        PHONE_NUMBER_HAS_NULL,
         PHONE_NUMBER_NOT_VALID,
         EMAIL_NOT_VALID,
-        EMAIL_NOT_VERIFY,
         QUESTION_NOT_ANSWER
     }
 }
