@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -71,7 +69,6 @@ public class UserServiceTest {
         //when
         userAppSample.setEmail("pouyapouryaie@yahoo.com");
 
-
         //then
         assertThat(userAppSample).isNotEqualTo(backup);
     }
@@ -81,13 +78,15 @@ public class UserServiceTest {
     void itShouldNotUpdateUserApp() throws Exception{
 
         //Get
+        userAppService.saveUser(userApp);
         UserApp userAppSample = userAppService.getUserById(1).get();
         UserApp backup = userAppSample.clone();
 
-        userAppSample.setEmail("pouyapouryaie@yahoo.com");
+        backup.setEmail("pouyapouryaie@yahoo.com");
+        backup.setUserName(null);
 
         //when
-        userAppService.updateUser(userAppSample);
+        userAppService.updateUser(backup);
 
         //then
         Optional<UserApp> optionalUser = userAppService.getUserById(userAppSample.getId());

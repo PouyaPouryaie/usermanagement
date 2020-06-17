@@ -8,13 +8,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 @Component("SenderEmailMessage")
-public class SenderEmailMessage implements SenderMessage{
+public class SenderEmailVerifyMessage implements SenderMessage{
 
     @Autowired
     private JavaMailSender emailSender;
 
-    @Value( "${app.verifyEmail.url}" )
-    private String emailVerifyUrl;
+    @Value( "${app.forgotPassword.url}" )
+    private String forgotPasswordUrl;
 
     @Override
     public void sendMessageTo(String to, String subject, String message) {
@@ -27,6 +27,6 @@ public class SenderEmailMessage implements SenderMessage{
     }
 
     private String buildMessageForVerify(String email, String message){
-        return emailVerifyUrl + "/" + email + "/" + message;
+        return forgotPasswordUrl + "/" + email + "/" + message;
     }
 }

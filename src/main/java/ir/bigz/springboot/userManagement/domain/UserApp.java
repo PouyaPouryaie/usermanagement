@@ -76,7 +76,7 @@ public class UserApp {
             userApp.setLastUpdateDate(this.getLastUpdateDate());
             return userApp;
         }catch (IllegalStateException e){
-            throw new AssertionError("userApp clone was exception \n" + e.getMessage());
+            throw new AssertionError("userApp clone has exception \n" + e.getMessage());
         }
     }
 
