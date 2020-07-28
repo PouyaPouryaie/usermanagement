@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.bigz.springboot.userManagement.domain.UserApp;
 import ir.bigz.springboot.userManagement.dto.UserAppRepository;
+import ir.bigz.springboot.userManagement.utils.EncryptTools;
+import ir.bigz.springboot.userManagement.viewmodel.ChangePasswordModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,6 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -37,6 +38,8 @@ public class UserControllerTest {
     private UserAppRepository userAppRepository;
 
     private UserApp userApp;
+
+    private ChangePasswordModel changePasswordModel;
 
     @BeforeEach
     void setUp(){
@@ -57,6 +60,8 @@ public class UserControllerTest {
         userApp.setActiveStatus(true);
         userApp.setQuestionAndAnswerMap(QAndA);
         userApp.setJoinDate(new Timestamp(new Date().getTime()));
+
+        changePasswordModel = new ChangePasswordModel("pouyapouryaie@hotmail.com", "123456", "201290", "201290");
     }
 
     @Test
@@ -74,6 +79,29 @@ public class UserControllerTest {
         assertThat(userAppRepository.findUserAppByEmail(userAppSample.getEmail()))
                 .isPresent()
                 .hasValueSatisfying(p -> assertThat(p.getEmail()).isEqualTo("pouyapouryaie@hotmail.com"));
+
+    }
+
+    @Test
+    @Transactional
+    void isShouldForgotPassword() throws Exception{
+
+        UserApp userAppSample = userApp;
+
+        ResultActions userAppResultAction = mockMvc.perform(post("/api/v1/userApp/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Objects.requireNonNull(objectToJson(userAppSample))));
+
+        ChangePasswordModel changePasswordModelForTest = changePasswordModel;
+        ResultActions forgotPasswordResultAction = mockMvc.perform(post("/api/v1/userApp/changepassword/" + changePasswordModelForTest.getEmail())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Objects.requireNonNull(objectToJson(changePasswordModelForTest))));
+
+
+        forgotPasswordResultAction.andExpect(status().isAccepted());
+        assertThat(userAppRepository.findUserAppByEmail(userAppSample.getEmail()))
+                .isPresent()
+                .hasValueSatisfying(p -> assertThat(p.getPassword()).isEqualTo(EncryptTools.toSHAHash(changePasswordModel.getNewPassword())));
 
     }
 

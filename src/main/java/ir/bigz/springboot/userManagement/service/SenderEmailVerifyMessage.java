@@ -13,8 +13,8 @@ public class SenderEmailVerifyMessage implements SenderMessage{
     @Autowired
     private JavaMailSender emailSender;
 
-    @Value( "${app.forgotPassword.url}" )
-    private String forgotPasswordUrl;
+    @Value( "${app.verifyEmail.url}" )
+    private String verifyEmail;
 
     @Override
     public void sendMessageTo(String to, String subject, String message) {
@@ -27,6 +27,6 @@ public class SenderEmailVerifyMessage implements SenderMessage{
     }
 
     private String buildMessageForVerify(String email, String message){
-        return forgotPasswordUrl + "/" + email + "/" + message;
+        return verifyEmail + "/" + email + "/" + message;
     }
 }
