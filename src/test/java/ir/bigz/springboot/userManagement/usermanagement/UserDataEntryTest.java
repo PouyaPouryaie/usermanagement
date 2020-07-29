@@ -1,7 +1,7 @@
 package ir.bigz.springboot.userManagement.usermanagement;
 
-import ir.bigz.springboot.userManagement.domain.UserApp;
-import ir.bigz.springboot.userManagement.utils.UserAppDataEntry;
+import ir.bigz.springboot.userManagement.domain.ApplicationUser;
+import ir.bigz.springboot.userManagement.utils.ApplicationUserDataEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @EnableTransactionManagement
 public class UserDataEntryTest {
 
-    UserApp userApp;
+    ApplicationUser userApp;
 
     @BeforeEach
     void setUp(){
@@ -24,7 +24,7 @@ public class UserDataEntryTest {
         Map<String, String> QAndA = new HashMap<>();
         QAndA.put("how old are you", "27");
 
-        userApp = new UserApp();
+        userApp = new ApplicationUser();
         userApp.setFirstName("pouya");
         userApp.setUserName("mr.po");
         userApp.setLastName("pouryaie");
@@ -38,7 +38,7 @@ public class UserDataEntryTest {
     void itShouldDataEntry(){
 
         //When
-        UserAppDataEntry.setJoinDate().and(UserAppDataEntry.setLastUpdateDate()).accept(userApp);
+        ApplicationUserDataEntry.setJoinDate().and(ApplicationUserDataEntry.setLastUpdateDate()).accept(userApp);
 
         //Then
         assertThat(userApp.getLastUpdateDate()).isNotNull();

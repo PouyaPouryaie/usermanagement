@@ -1,56 +1,57 @@
 package ir.bigz.springboot.userManagement.utils;
 
-import ir.bigz.springboot.userManagement.domain.UserApp;
+import ir.bigz.springboot.userManagement.domain.ApplicationUser;
 
 import java.util.function.Function;
+
 import java.util.regex.Pattern;
 
-import static ir.bigz.springboot.userManagement.utils.UserAppValidation.ValidationResult.*;
-import static ir.bigz.springboot.userManagement.utils.UserAppValidation.*;
+import static ir.bigz.springboot.userManagement.utils.ApplicationUserValidation.ValidationResult.*;
+import static ir.bigz.springboot.userManagement.utils.ApplicationUserValidation.*;
 
-public interface UserAppValidation extends Function<UserApp, ValidationResult> {
+public interface ApplicationUserValidation extends Function<ApplicationUser, ValidationResult> {
 
-    static Pattern pattern = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$");
+    Pattern pattern = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$");
 
 
-    static UserAppValidation isUserNameNotNull() {
+    static ApplicationUserValidation isUserNameNotNull() {
         return userApp ->
                 userApp.getUserName() != null ?
                         SUCCESS : USERNAME_HAS_NULL;
     }
 
-    static UserAppValidation isPhoneNumberNotNull() {
+    static ApplicationUserValidation isPhoneNumberNotNull() {
         return userApp ->
                 userApp.getPhoneNumber() != null ?
                         SUCCESS : PHONE_NUMBER_HAS_NULL;
     }
 
-    static UserAppValidation isEmailNotNull() {
+    static ApplicationUserValidation isEmailNotNull() {
         return userApp ->
                 userApp.getEmail() != null ?
                         SUCCESS : EMAIL_HAS_NULL;
     }
 
-    static UserAppValidation isEmailValid() {
+    static ApplicationUserValidation isEmailValid() {
         return userApp ->
-            pattern.matcher(userApp.getEmail()).find() ?
-                    SUCCESS : EMAIL_NOT_VALID;
+                pattern.matcher(userApp.getEmail()).find() ?
+                        SUCCESS : EMAIL_NOT_VALID;
     }
 
-    static UserAppValidation isPhoneNumberValid() {
+    static ApplicationUserValidation isPhoneNumberValid() {
         return userApp -> userApp.getPhoneNumber().startsWith("0") &&
                 userApp.getPhoneNumber().length() == 11 ?
                 SUCCESS : PHONE_NUMBER_NOT_VALID;
     }
 
-    static UserAppValidation isQuestionAndAnswerNotEmpty() {
+    static ApplicationUserValidation isQuestionAndAnswerNotEmpty() {
         return userApp -> userApp.getQuestionAndAnswerMap().size() > 0 ?
                 SUCCESS : QUESTION_NOT_ANSWER;
     }
 
-    default UserAppValidation and (UserAppValidation other) {
+    default ApplicationUserValidation and (ApplicationUserValidation other) {
         return userApp -> {
-            ValidationResult result = this.apply(userApp);
+            ApplicationUserValidation.ValidationResult result = this.apply(userApp);
             return result.equals(SUCCESS) ? other.apply(userApp) : result;
         };
     }

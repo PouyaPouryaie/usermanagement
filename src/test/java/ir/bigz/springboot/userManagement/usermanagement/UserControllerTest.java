@@ -2,8 +2,8 @@ package ir.bigz.springboot.userManagement.usermanagement;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.bigz.springboot.userManagement.domain.UserApp;
-import ir.bigz.springboot.userManagement.dto.UserAppRepository;
+import ir.bigz.springboot.userManagement.dao.ApplicationUserDao;
+import ir.bigz.springboot.userManagement.domain.ApplicationUser;
 import ir.bigz.springboot.userManagement.utils.EncryptTools;
 import ir.bigz.springboot.userManagement.viewmodel.ChangePasswordModel;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,9 +35,9 @@ public class UserControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private UserAppRepository userAppRepository;
+    private ApplicationUserDao userAppRepository;
 
-    private UserApp userApp;
+    private ApplicationUser userApp;
 
     private ChangePasswordModel changePasswordModel;
 
@@ -47,7 +47,7 @@ public class UserControllerTest {
         Map<String, String> QAndA = new HashMap<>();
         QAndA.put("how old are you", "27");
 
-        userApp = new UserApp();
+        userApp = new ApplicationUser();
         userApp.setFirstName("pouya");
         userApp.setUserName("mr.po");
         userApp.setLastName("pouryaie");
@@ -68,7 +68,7 @@ public class UserControllerTest {
     @Transactional
     void isShouldCreateUserAppSuccessfully() throws Exception{
 
-        UserApp userAppSample = userApp;
+        ApplicationUser userAppSample = userApp;
 
         ResultActions userAppResultAction = mockMvc.perform(post("/api/v1/userApp/add")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +86,7 @@ public class UserControllerTest {
     @Transactional
     void isShouldForgotPassword() throws Exception{
 
-        UserApp userAppSample = userApp;
+        ApplicationUser userAppSample = userApp;
 
         ResultActions userAppResultAction = mockMvc.perform(post("/api/v1/userApp/add")
                 .contentType(MediaType.APPLICATION_JSON)

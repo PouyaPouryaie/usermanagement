@@ -1,10 +1,11 @@
 package ir.bigz.springboot.userManagement.usermanagement;
 
-import ir.bigz.springboot.userManagement.domain.UserApp;
-import ir.bigz.springboot.userManagement.service.UserAppService;
+import ir.bigz.springboot.userManagement.domain.ApplicationUser;
+import ir.bigz.springboot.userManagement.service.ApplicationUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,10 +21,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @EnableTransactionManagement
 public class UserServiceTest {
 
+    @Qualifier("ApplicationUserServiceImpl")
     @Autowired
-    private UserAppService userAppService;
+    private ApplicationUserService userAppService;
 
-    private UserApp userApp;
+    private ApplicationUser userApp;
 
     @BeforeEach
     void setUp(){
@@ -31,7 +33,7 @@ public class UserServiceTest {
         Map<String, String> QAndA = new HashMap<>();
         QAndA.put("how old are you", "27");
 
-        userApp = new UserApp();
+        userApp = new ApplicationUser();
         userApp.setFirstName("pouya");
         userApp.setUserName("mr.po");
         userApp.setLastName("pouryaie");
@@ -46,13 +48,13 @@ public class UserServiceTest {
     void itShouldSaveUserApp() {
 
         //Get
-        UserApp userAppSample = userApp;
+        ApplicationUser userAppSample = userApp;
 
         //when
-        userAppService.saveUser(userAppSample);
+        userAppService.addUser(userAppSample);
 
         //then
-        Optional<UserApp> optionalUser = userAppService.getUserById(userAppSample.getId());
+        Optional<ApplicationUser> optionalUser = userAppService.getApplicationUserById(userAppSample.getId());
         assertThat(optionalUser).isPresent().hasValueSatisfying(c -> {
             assertThat(c).isEqualToComparingFieldByField(userApp);
         });
@@ -63,8 +65,8 @@ public class UserServiceTest {
     void itShouldNotEqual(){
 
         //get
-        UserApp userAppSample = userAppService.getUserById(1).get();
-        UserApp backup = userAppSample.clone();
+        ApplicationUser userAppSample = userAppService.getApplicationUserById(1).get();
+        ApplicationUser backup = userAppSample.clone();
 
         //when
         userAppSample.setEmail("pouyapouryaie@yahoo.com");
@@ -78,9 +80,9 @@ public class UserServiceTest {
     void itShouldNotUpdateUserApp() throws Exception{
 
         //Get
-        userAppService.saveUser(userApp);
-        UserApp userAppSample = userAppService.getUserById(1).get();
-        UserApp backup = userAppSample.clone();
+        userAppService.addUser(userApp);
+        ApplicationUser userAppSample = userAppService.getApplicationUserById(1).get();
+        ApplicationUser backup = userAppSample.clone();
 
         backup.setEmail("pouyapouryaie@yahoo.com");
         backup.setUserName(null);
@@ -89,7 +91,7 @@ public class UserServiceTest {
         userAppService.updateUser(backup);
 
         //then
-        Optional<UserApp> optionalUser = userAppService.getUserById(userAppSample.getId());
+        Optional<ApplicationUser> optionalUser = userAppService.getApplicationUserById(userAppSample.getId());
         assertThat(optionalUser).isPresent().hasValueSatisfying(c -> {
             assertThat(c.getLastUpdateDate()).isEqualTo(backup.getLastUpdateDate());
         });
@@ -100,16 +102,16 @@ public class UserServiceTest {
     void itShouldUpdateUserApp() throws Exception{
 
         //Get
-        UserApp userAppSample = userApp;
-        userAppService.saveUser(userAppSample);
-        UserApp backup = userAppSample.clone();
+        ApplicationUser userAppSample = userApp;
+        userAppService.addUser(userAppSample);
+        ApplicationUser backup = userAppSample.clone();
         userAppSample.setEmail("pouyapouryaie@yahoo.com");
 
         //when
         userAppService.updateUser(userAppSample);
 
         //then
-        Optional<UserApp> optionalUser = userAppService.getUserById(userAppSample.getId());
+        Optional<ApplicationUser> optionalUser = userAppService.getApplicationUserById(userAppSample.getId());
         assertThat(optionalUser).isPresent().hasValueSatisfying(c -> {
             assertThat(c.getLastUpdateDate()).isEqualTo(backup.getLastUpdateDate());
         });

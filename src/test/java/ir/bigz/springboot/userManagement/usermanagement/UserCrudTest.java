@@ -1,7 +1,7 @@
 package ir.bigz.springboot.userManagement.usermanagement;
 
-import ir.bigz.springboot.userManagement.domain.UserApp;
-import ir.bigz.springboot.userManagement.dto.UserAppRepository;
+import ir.bigz.springboot.userManagement.dao.ApplicationUserDao;
+import ir.bigz.springboot.userManagement.domain.ApplicationUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +20,9 @@ import static org.assertj.core.api.Assertions.*;
 public class UserCrudTest {
 
     @Autowired
-    private UserAppRepository userAppRepository;
+    private ApplicationUserDao userAppRepository;
 
-    private UserApp userApp;
+    private ApplicationUser userApp;
 
     @BeforeEach
     void setUp(){
@@ -30,7 +30,7 @@ public class UserCrudTest {
         Map<String, String> QAndA = new HashMap<>();
         QAndA.put("how old are you", "27");
 
-        userApp = new UserApp();
+        userApp = new ApplicationUser();
         userApp.setFirstName("pouya");
         userApp.setUserName("mr.po");
         userApp.setLastName("pouryaie");
@@ -50,13 +50,13 @@ public class UserCrudTest {
     void itShouldSaveUserApp() {
 
         //Get
-        UserApp userAppSample = userApp;
+        ApplicationUser userAppSample = userApp;
 
         //when
         userAppRepository.save(userAppSample);
 
         //then
-        Optional<UserApp> optionalUser = userAppRepository.findUserAppByEmail(userAppSample.getEmail());
+        Optional<ApplicationUser> optionalUser = userAppRepository.findUserAppByEmail(userAppSample.getEmail());
         assertThat(optionalUser).isPresent().hasValueSatisfying(c -> {
             assertThat(c).isEqualToComparingFieldByField(userApp);
         });
@@ -67,13 +67,13 @@ public class UserCrudTest {
     void itShouldSelectCustomerByPhoneNumber(){
 
         //Get
-        UserApp userAppSample = userApp;
+        ApplicationUser userAppSample = userApp;
 
         //when
         userAppRepository.save(userAppSample);
 
         //then
-        Optional<UserApp> userAppOptional = userAppRepository.findUserAppByPhone(userAppSample.getPhoneNumber());
+        Optional<ApplicationUser> userAppOptional = userAppRepository.findUserAppByPhone(userAppSample.getPhoneNumber());
         assertThat(userAppOptional).isPresent().hasValueSatisfying(c ->{
             assertThat(c.getId()).isNotZero();
         });

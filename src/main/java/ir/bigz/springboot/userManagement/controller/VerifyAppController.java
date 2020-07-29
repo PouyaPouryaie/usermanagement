@@ -1,6 +1,6 @@
 package ir.bigz.springboot.userManagement.controller;
 
-import ir.bigz.springboot.userManagement.service.UserAppService;
+import ir.bigz.springboot.userManagement.service.ApplicationUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/verify")
 public class VerifyAppController {
 
-    private final UserAppService userAppService;
+    private final ApplicationUserService userAppService;
 
     @Autowired
-    public VerifyAppController(UserAppService userAppService) {
-        this.userAppService = userAppService;
+    public VerifyAppController(ApplicationUserService applicationUserService) {
+        this.userAppService = applicationUserService;
     }
 
     @GetMapping(path = "/emailVerifier/{userEmail}/{userInfoHash}", produces = MediaType.APPLICATION_JSON_VALUE)
