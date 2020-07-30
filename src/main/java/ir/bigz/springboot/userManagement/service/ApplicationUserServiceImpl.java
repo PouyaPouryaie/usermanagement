@@ -13,6 +13,7 @@ import ir.bigz.springboot.userManagement.viewmodel.ChangePasswordModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -80,14 +81,17 @@ public class ApplicationUserServiceImpl implements ApplicationUserService{
     }
 
     @Override
-    public void updateUser(ApplicationUser applicationUser) {
-        try {
-            ApplicationUser basicApplicationUser = applicationUserExistById(applicationUser.getId());
+    public void updateUser(ApplicationUser applicationUser, Authentication authentication) {
+
+        ApplicationUser basicApplicationUser = applicationUserExistById(applicationUser.getId());
+        if(authorizeOperationByUser(authentication, basicApplicationUser)){
             validationUserAppForUpdate(applicationUser);
             applicationUserDataEntryForUpdate(basicApplicationUser, applicationUser);
             applicationUserDao.save(basicApplicationUser);
-        }catch (IllegalStateException e){
-            log.error("update process has problem \n" + e.getMessage());
+        }
+        else{
+            log.error("user dose not access to this data");
+            throw new IllegalStateException("user dose not access to this data");
         }
     }
 
@@ -113,8 +117,26 @@ public class ApplicationUserServiceImpl implements ApplicationUserService{
 
     @Override
     public boolean findUser(String userName){
-        Optional<ApplicationUser> applicationUser = applicationUserDao.findApplicationUserByUserName(userName);
+        Optional<ApplicationUser> applicationUser = applicationUserDao.
+                findApplicationUserByUserName(userName);
         return applicationUser.isPresent();
+    }
+
+    @Override
+    public ApplicationUser getApplicationUserByIdBasedAuthorize(long id, Authentication authentication) {
+
+        Optional<ApplicationUser> applicationUserById = getApplicationUserById(id);
+        if(applicationUserById.isPresent()){
+            if(authorizeOperationByUser(authentication, applicationUserById.get())){
+                return applicationUserById.get();
+            }
+            else{
+                throw new IllegalStateException("user dose not access to this data");
+            }
+        }
+        else{
+            throw new IllegalStateException("user with id dose not exist");
+        }
     }
 
     @Override
@@ -181,6 +203,21 @@ public class ApplicationUserServiceImpl implements ApplicationUserService{
             applicationUserDao.save(userApp);
         }catch (IllegalStateException e){
             System.out.println("changePasswordForForgotPassword process has problem \n" + e.getMessage());
+        }
+    }
+
+    private boolean authorizeOperationByUser(Authentication authentication, ApplicationUser applicationUser){
+        if(authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority
+                        .getAuthority()
+                        .equals("ROLE_Admin"))){
+            return true;
+        }
+        else if(applicationUser.getUserName().equals(authentication.getName())){
+            return true;
+        }
+        else{
+            return false;
         }
     }
 
@@ -282,8 +319,13 @@ public class ApplicationUserServiceImpl implements ApplicationUserService{
 
     private void validationChangePasswordProcess(String currentPasswordFromDB, ChangePasswordModel changePasswordModel){
 
-        if(PasswordValidationTools.isTwoPasswordSame(EncryptTools.toSHAHash(
-                changePasswordModel.getNewPassword()))
+/*        if(PasswordValidationTools.isTwoPasswordSame(EncryptTools.toSHAHash(
+                changePasswordModel.getCurrentPassword()))
+                .test(currentPasswordFromDB)){
+            throw new IllegalStateException("current password from model not same with current password in db");
+        }*/
+        if(PasswordValidationTools.isTwoPasswordSame(passwordEncoder.encode(
+                changePasswordModel.getCurrentPassword()))
                 .test(currentPasswordFromDB)){
             throw new IllegalStateException("current password from model not same with current password in db");
         }

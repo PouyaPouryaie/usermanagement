@@ -120,6 +120,9 @@ public class InitBasicData {
         ApplicationUser applicationUserAdmin = new ApplicationUser();
         applicationUserAdmin.setUserName("pouya");
         applicationUserAdmin.setPassword("password");
+        applicationUserAdmin.setEmail("pouyapouryaie@hotmail.com");
+        applicationUserAdmin.setPhoneNumber("09388773155");
+        applicationUserAdmin.setQuestionAndAnswerMap(new HashMap<>(){{put("city","tehran");}});
         applicationUserService.addUser(applicationUserAdmin);
 
         Optional<ApplicationUserRole> roleAdmin = applicationUserRoleDao.findApplicationUserRoleByRoleName("ROLE_Admin");
@@ -132,6 +135,9 @@ public class InitBasicData {
         ApplicationUser applicationUserAdminTrain = new ApplicationUser();
         applicationUserAdminTrain.setUserName("tom");
         applicationUserAdminTrain.setPassword("password");
+        applicationUserAdminTrain.setEmail("pouyapouryaie@yahoo.com");
+        applicationUserAdminTrain.setPhoneNumber("09122930872");
+        applicationUserAdminTrain.setQuestionAndAnswerMap(new HashMap<>(){{put("city","kerman");}});
         applicationUserService.addUser(applicationUserAdminTrain);
 
         Optional<ApplicationUserRole> roleAdminTrain = applicationUserRoleDao.findApplicationUserRoleByRoleName("ROLE_AdminTrainer");

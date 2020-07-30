@@ -2,6 +2,7 @@ package ir.bigz.springboot.userManagement.service;
 
 import ir.bigz.springboot.userManagement.domain.ApplicationUser;
 import ir.bigz.springboot.userManagement.viewmodel.ChangePasswordModel;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,11 +15,13 @@ public interface ApplicationUserService {
 
     void addUser(ApplicationUser applicationUser);
 
-    void updateUser(ApplicationUser applicationUser);
+    void updateUser(ApplicationUser applicationUser, Authentication authentication);
 
     void deleteUser(long id);
 
     void activeUser(long id);
+
+    ApplicationUser getApplicationUserByIdBasedAuthorize(long id, Authentication authentication);
 
     Optional<ApplicationUser> getApplicationUserById(long id);
 

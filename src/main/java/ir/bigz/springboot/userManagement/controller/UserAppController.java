@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/userApp")
@@ -28,12 +30,14 @@ public class UserAppController {
     }
 
     @GetMapping(path = "/allUser", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_Admin')")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<ApplicationUser> getAllUser() {
         return userAppService.getAllUser();
     }
 
     @PostMapping(path = "/add", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('ROLE_Admin', 'ROLE_AdminTrainer')")
     @ResponseStatus(HttpStatus.CREATED)
     public String addUser(@RequestBody ApplicationUser userModel) {
         userAppService.addUser(userModel);
@@ -41,21 +45,38 @@ public class UserAppController {
     }
 
     @GetMapping(path = "/{userAppId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('ROLE_Admin', 'ROLE_Editor')")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ApplicationUser getUserById(@PathVariable("userAppId") long id){
-        Optional<ApplicationUser> userApp = userAppService.getApplicationUserById(id);
-        return userApp.get();
+    public ResponseEntity<?> getUserById(@PathVariable("userAppId") long id){
+
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        try {
+            ApplicationUser applicationUser = userAppService
+                    .getApplicationUserByIdBasedAuthorize(id, authentication);
+            return new ResponseEntity<>(applicationUser, HttpStatus.ACCEPTED);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     @PutMapping(path = "/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public String updateUser(@RequestBody ApplicationUser userModel) {
-        userAppService.updateUser(userModel);
-        return "user update successfully";
+    @PreAuthorize("hasAnyRole('ROLE_Admin', 'ROLE_Editor')")
+    public ResponseEntity<?> updateUser(@RequestBody ApplicationUser userModel) {
+
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        try {
+            userAppService.updateUser(userModel, authentication);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     @DeleteMapping(path = "/delete/{userAppId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
+    @PreAuthorize("hasRole('ROLE_Admin')")
     public String deleteUserById(@PathVariable("userAppId") long id) {
         userAppService.deleteUser(id);
         return "user delete successfully";
@@ -63,6 +84,7 @@ public class UserAppController {
 
     @PutMapping(path = "/active/{userAppId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
+    @PreAuthorize("hasRole('ROLE_Admin')")
     public String activeUserById(@PathVariable("userAppId") long id) {
         userAppService.activeUser(id);
         return "user active successfully";

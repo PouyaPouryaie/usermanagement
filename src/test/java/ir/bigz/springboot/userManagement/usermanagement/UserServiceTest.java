@@ -88,7 +88,7 @@ public class UserServiceTest {
         backup.setUserName(null);
 
         //when
-        userAppService.updateUser(backup);
+        userAppService.updateUser(backup, );
 
         //then
         Optional<ApplicationUser> optionalUser = userAppService.getApplicationUserById(userAppSample.getId());
@@ -108,7 +108,7 @@ public class UserServiceTest {
         userAppSample.setEmail("pouyapouryaie@yahoo.com");
 
         //when
-        userAppService.updateUser(userAppSample);
+        userAppService.updateUser(userAppSample, );
 
         //then
         Optional<ApplicationUser> optionalUser = userAppService.getApplicationUserById(userAppSample.getId());
