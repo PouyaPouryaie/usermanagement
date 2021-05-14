@@ -5,6 +5,7 @@ import ir.bigz.springboot.userManagement.jwt.JwtConfig;
 import ir.bigz.springboot.userManagement.jwt.JwtTokenVerifier;
 import ir.bigz.springboot.userManagement.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -20,6 +21,7 @@ import javax.crypto.SecretKey;
 
 @Configuration
 @EnableWebSecurity
+@EnableConfigurationProperties
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
